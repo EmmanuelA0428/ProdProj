@@ -1,0 +1,234 @@
+Task for july 28th 
+* Make an object everytime the user clicked the add Goal button - The object, will have the task name, description, priotiy, for now
+
+
+
+import { useState } from "react";
+import { useContext } from "react";
+import * as React from "react";
+import Icon from "react-native-vector-icons/FontAwesome";
+import {
+  StyleSheet,
+  Text,
+  View,
+  Button,
+  TextInput,
+  TouchableOpacity,
+  Modal,
+  FlatList,
+  KeyboardAvoidingView,
+  Platform,
+  TouchableWithoutFeedback,
+  Keyboard,
+} from "react-native";
+
+import GoalsContext from "../GoalsContext";
+
+function GoalScreen({ navigation }) {
+  const { userGoals, setUserGoals } = useContext(GoalsContext);
+
+  //State variables
+  const [enteredGoal, setEnteredGoal] = useState("");
+  // const [userGoals, setUserGoals] = useState([]); // Use the context
+  const [modalVisible, setModalVisible] = useState(false);
+  const [modal2Visible, setModal2Visible] = useState(false);
+
+  //Event Handlers
+  const handleInputChange = (text) => {
+    //This function is called when the text input is changed
+    setEnteredGoal(text);
+  };
+
+  const renderGoalItem = ({ item }) => {
+    return <Text style={styles.goalsStyleContainer}>{item}</Text>;
+  };
+
+  //Functions
+  function addGoalHandler() {
+    if (enteredGoal.trim() !== "") {
+      setUserGoals((prevGoals) => [...prevGoals, enteredGoal.trim()]);
+      removeText();
+      openModal();
+    } else {
+      // Handle empty goal input if needed
+    }
+  }
+  function removeText() {
+    //This function is called when the add goal button is pressed - it removes the text from the text input
+    setEnteredGoal("");
+  }
+  function closeModal() {
+    //This function is called when the close modal button is pressed
+    setModalVisible(false);
+    console.log("Modal Closed");
+  }
+  function openModal() {
+    //This function is called when the add goal button is pressed
+    setModalVisible(true);
+  }
+  function arraylength() {
+    return userGoals.length;
+  }
+  function clearGoals() {
+    setUserGoals([]);
+    console.log("Goals cleared");
+  }
+  function menuBar() {
+    setModal2Visible(true);
+  }
+  //new code
+  const [goalText, setGoalText] = useState("");
+  const [isInputVisible, setInputVisible] = useState(false);
+
+  const handleAddGoal = () => {
+    setInputVisible(true); // Show the input field and buttons when this button is clicked
+  };
+
+  const handleAddProp = () => {
+    // Handle adding the prop here
+    console.log("Adding prop");
+    setInputVisible(false); // Hide the input field and buttons when any button is clicked
+  };
+
+  const handleAddContext = () => {
+    // Handle adding the context here
+    console.log("Adding context");
+    setInputVisible(false); // Hide the input field and buttons when any button is clicked
+  };
+
+  // Hide the input field and buttons when any touch occurs outside the TextInput
+  const handleDismissContent = () => {
+    setInputVisible(false);
+    Keyboard.dismiss(); // Dismiss the keyboard
+  };
+
+  return (
+    // <View style={styles.container}>
+    //   <Text>Goals Screen</Text>
+    //   <View style={styles.goalContainer}>
+    //     <TextInput
+    //       style={styles.textContainer}
+    //       type="text"
+    //       placeholder="Enter Goal"
+    //       value={enteredGoal}
+    //       //onChangeText takes a call back function as an argument and passes the text to the function
+    //       //In this case, the function is handleInputChange, which has a parameter of text
+    //       onChangeText={handleInputChange}
+    //     />
+    //     <Button title="Add Goal" onPress={addGoalHandler} />
+    //     <Button title="Close" onPress={openModal} />
+    //   </View>
+
+    <View>
+      <View>
+        <Text>Goal Added</Text>
+        <Text> Number of goals: {arraylength()}</Text>
+        <Button title="Clear goals" onPress={clearGoals} />
+        <View>
+          <FlatList
+            data={userGoals} //The array in which the flat list is using
+            renderItem={renderGoalItem}
+            //item represents current value in the "data"
+            //index represents the current index of the "item"
+            //The lkey extractor gives you a unqiue id for each item.
+            keyExtractor={(item, index) => index.toString()}
+          />
+        </View>
+        <Button title="Add another Goal" onPress={closeModal} />
+      </View>
+
+      {/* Wrap the content with TouchableWithoutFeedback */}
+      <TouchableWithoutFeedback onPress={handleDismissContent}>
+        <KeyboardAvoidingView
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
+          style={styles.inputContainer}
+        >
+          {/* Show the input field and buttons when isInputVisible is true */}
+          {isInputVisible ? (
+            <>
+              <TextInput
+                style={styles.textInput}
+                placeholder="Add Goal"
+                //value={goalText}
+                // onChangeText={setGoalText}
+                onSubmitEditing={handleAddGoal}
+                autoFocus={true}
+                value={enteredGoal}
+                onChangeText={handleInputChange}
+              />
+              <Button title="Add prop" onPress={handleAddProp} />
+              <Button title="Add context" onPress={handleAddContext} />
+            </>
+          ) : (
+            // Show this button when isInputVisible is false
+            <Button title="Add Goal" onPress={handleAddGoal} />
+          )}
+        </KeyboardAvoidingView>
+      </TouchableWithoutFeedback>
+
+      {/* <View style={styles.menuBar}>
+        <Text>
+          <Icon name="chevron-left" size={30} color="black" onPress={menuBar} />
+        </Text>
+      </View> */}
+
+      <Modal visible={modal2Visible}>
+        <Text>Testing</Text>
+      </Modal>
+    </View>
+  );
+}
+
+export default GoalScreen;
+
+//Styles
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "#fff",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  goalContainer: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    alignItems: "center",
+    width: "80%",
+    marginTop: 100,
+  },
+  textContainer: {
+    borderColor: "black",
+    borderWidth: 1,
+    padding: 10,
+    width: "60%",
+  },
+  modalContainer: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "white",
+    padding: 100,
+    borderRadius: 10,
+  },
+  goalsStyleContainer: {
+    color: "red",
+  },
+  menuBar: {
+    position: "absolute",
+    bottom: 380,
+    right: -5,
+  },
+  textInput: {
+    borderColor: "black",
+    borderWidth: 1,
+    padding: 10,
+    width: "80%",
+  },
+  inputContainer: {
+    flexDirection: "column", // Change to 'column' to make input and buttons stack vertically
+    justifyContent: "center",
+    alignItems: "center",
+    width: "100%", // Change to '100%' to occupy the full width of the screen
+    marginTop: 20, // Adjust the marginTop as needed
+  },
+});
