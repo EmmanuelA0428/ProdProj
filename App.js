@@ -15,6 +15,8 @@ import {
   Keyboard,
 } from "react-native";
 
+//Testing how branch works
+
 //Needed for navigation
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
