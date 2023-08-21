@@ -2,6 +2,8 @@ import { StatusBar } from "expo-status-bar";
 import { useState } from "react";
 import * as React from "react";
 import Icon from "react-native-vector-icons/FontAwesome";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+
 import {
   StyleSheet,
   Text,
@@ -24,7 +26,8 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 //Importing the screens
 import HomeScreen from "./Screens/HomeScreen";
 import GoalsScreen from "./Screens/GoalScreen";
-import OtherScreen from "./Screens/OtherScreen";
+import SettingsScreen from "./Screens/OtherScreen";
+import NotesScreen from "./Screens/NotesScreen";
 
 //creating the stack
 const Stack = createNativeStackNavigator();
@@ -32,6 +35,8 @@ const Stack = createNativeStackNavigator();
 import { GoalsProvider } from "./StoreAppData/GoalsData";
 import { DescriptionProvider } from "./StoreAppData/DescriptionData";
 import { UserGoalDataProvider } from "./StoreAppData/userGoalInputData";
+import { UserPriorityProvider } from "./StoreAppData/PriorityData";
+import { UserTagProvider } from "./StoreAppData/TagData";
 function CustomHeader({ navigation }) {
   return <Icon name="bars" size={100} color="black" style={styles.icon} />;
 }
@@ -41,17 +46,25 @@ export default function App() {
     <UserGoalDataProvider>
       <GoalsProvider>
         <DescriptionProvider>
-          <NavigationContainer>
-            <Stack.Navigator initialRouteName="Home">
-              <Stack.Screen
-                name="Home"
-                component={HomeScreen}
-                options={{ title: "Home Page", header: () => <CustomHeader /> }}
-              />
-              <Stack.Screen name="Goal" component={GoalsScreen} />
-              <Stack.Screen name="Other" component={OtherScreen} />
-            </Stack.Navigator>
-          </NavigationContainer>
+          <UserPriorityProvider>
+            <UserTagProvider>
+              <NavigationContainer>
+                <Stack.Navigator initialRouteName="Home">
+                  <Stack.Screen
+                    name="Home"
+                    component={HomeScreen}
+                    options={{
+                      title: "Home Page",
+                      header: () => <CustomHeader />,
+                    }}
+                  />
+                  <Stack.Screen name="Goal" component={GoalsScreen} />
+                  <Stack.Screen name="Settings" component={SettingsScreen} />
+                  <Stack.Screen name="Notes" component={NotesScreen} />
+                </Stack.Navigator>
+              </NavigationContainer>
+            </UserTagProvider>
+          </UserPriorityProvider>
         </DescriptionProvider>
       </GoalsProvider>
     </UserGoalDataProvider>
