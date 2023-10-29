@@ -886,7 +886,7 @@ const styles = StyleSheet.create({
   //   width: "100%",
   //   position: "absolute",
   //   bottom: 100,
-  // },
+  // }
 });
 
 export default GoalScreen;
