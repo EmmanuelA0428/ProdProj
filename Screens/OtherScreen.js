@@ -1,6 +1,6 @@
 import React, { createContext, useState, useEffect, useContext } from "react";
 import { RectButton, Swipeable } from "react-native-gesture-handler";
-import { GestureHandlerRootView } from "react-native-gesture-handler"; // Import GestureHandlerRootView
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 import {
   StyleSheet,
   Text,
@@ -11,39 +11,49 @@ import {
   FlatList,
   TextInput,
 } from "react-native";
-//Importinh the context
 import userPriorityContext from "../StoreAppData/PriorityData";
 import userTagContext from "../StoreAppData/TagData";
+import DeletedUserGoalsContext from "../StoreAppData/DeletedGoalsData";
+import CompletedUserGoalsContext from "../StoreAppData/CompletedGoalsData";
 
 function OtherScreen({ navigation }) {
-  //useStates
   const [isPriorityModalVisible, setIsPriorityModalVisible] = useState(false);
   const [isTagModalVisible, setIsTagModalVisible] = useState(false);
   const [enteredTag, setEnteredTag] = useState("");
-  //useContext
+  const [isViewSavedGoalModalVisible, setisViewSavedGoalModalVisible] =
+    useState(false);
+  const [isViewDeletedGoalModalVisible, setisViewDeletedGoalModalVisible] =
+    useState(false);
+
   const { userPriority, setUserPriority } = useContext(userPriorityContext);
   const { userTag, setUserTag } = useContext(userTagContext);
+  const { deletedUserGoals, setDeletedUserGoals } = useContext(
+    DeletedUserGoalsContext
+  );
+  const { completedUserGoals, setCompletedUserGoals } = useContext(
+    CompletedUserGoalsContext
+  );
 
-  //Functions to handle the input
   function handleTagChange(text) {
     setEnteredTag(text);
   }
 
-  //Functions to show and hide the modals
   function priorityModalIsVisible() {
     setIsPriorityModalVisible(true);
   }
+
   function priorityModalIsNotVisible() {
     setIsPriorityModalVisible(false);
   }
+
   function tagModalIsVisible() {
     setIsTagModalVisible(true);
   }
+
   function tagModalIsNotVisible() {
     setIsTagModalVisible(false);
   }
 
-  //Functions to add and remove Priority / Tags
   function addNewPriority() {
     const newPriorityValue = `Priority ${userPriority.length + 1}`;
     const newId = Math.max(...userPriority.map((item) => item.id), 0) + 1;
@@ -54,17 +64,18 @@ function OtherScreen({ navigation }) {
     ]);
     console.log(userPriority);
   }
+
   function removePriority() {
     if (userPriority.length === 0) {
-      return; // Do nothing if there are no priorities to remove
+      return;
     }
 
-    const newPriorityList = userPriority.slice(0, -1); // Remove the last priority
-
+    const newPriorityList = userPriority.slice(0, -1);
     setUserPriority(newPriorityList);
 
     console.log(userPriority);
   }
+
   function addNewTag() {
     const newTag = enteredTag;
     const newId = Math.max(...userTag.map((item) => item.id), 0) + 1;
@@ -73,15 +84,14 @@ function OtherScreen({ navigation }) {
     }
     setUserTag((prevTag) => [...prevTag, { id: newId, tag: newTag }]);
     console.log(userTag);
-
     setEnteredTag("");
   }
+
   function removeTag(id) {
     const newTagList = userTag.filter((item) => item.id !== id);
     setUserTag(newTagList);
   }
 
-  //Rendering the screens
   function renderPriorityItem({ item }) {
     return (
       <View>
@@ -89,6 +99,57 @@ function OtherScreen({ navigation }) {
       </View>
     );
   }
+
+  function renderSavedUserGoals() {
+    return (
+      <View style={styles.savedGoalsContainer}>
+        <Text>Saved Goals</Text>
+        <FlatList
+          data={completedUserGoals}
+          keyExtractor={(item, index) => index.toString()}
+          renderItem={({ item, index }) => (
+            <View style={styles.savedGoalItem}>
+              <Text style={styles.savedGoalText}>Goal: {item[0]}</Text>
+              <Text style={styles.savedGoalText}>Description: {item[1]}</Text>
+              <Text style={styles.savedGoalText}>Priority: {item[2]}</Text>
+              <Text style={styles.savedGoalText}>Tag: {item[3]}</Text>
+            </View>
+          )}
+        />
+        <Button title="Close" onPress={closeSavedGoalsModal} />
+      </View>
+    );
+  }
+
+  function renderDeletedUserGoals() {
+    return (
+      <View style={styles.savedGoalsContainer}>
+        <Text>Deleted Goals</Text>
+
+        <FlatList
+          data={deletedUserGoals}
+          keyExtractor={(item, index) => index.toString()}
+          renderItem={({ item, index }) => (
+            <View style={styles.savedGoalItem}>
+              <Text style={styles.savedGoalText}>Goal: {item[0]}</Text>
+              <Text style={styles.savedGoalText}>Description: {item[1]}</Text>
+              <Text style={styles.savedGoalText}>Priority: {item[2]}</Text>
+              <Text style={styles.savedGoalText}>Tag: {item[3]}</Text>
+            </View>
+          )}
+        />
+        <Button title="Close" onPress={closeDeletedGoalsModal} />
+      </View>
+    );
+  }
+
+  function closeDeletedGoalsModal() {
+    setisViewDeletedGoalModalVisible(false);
+  }
+  function closeSavedGoalsModal() {
+    setisViewSavedGoalModalVisible(false);
+  }
+
   function renderTagItem({ item }) {
     const renderRightActions = () => (
       <RectButton
@@ -110,6 +171,14 @@ function OtherScreen({ navigation }) {
     );
   }
 
+  function savedGoalsModalIsVisible() {
+    setisViewSavedGoalModalVisible(true);
+  }
+
+  function deletedGoalsModalIsVisible() {
+    setisViewDeletedGoalModalVisible(true);
+  }
+
   return (
     <View>
       <Text>Settings Screen</Text>
@@ -117,6 +186,8 @@ function OtherScreen({ navigation }) {
       <Button title="General" />
       <Button title="Edit Priority" onPress={priorityModalIsVisible} />
       <Button title="Edit Tags" onPress={tagModalIsVisible} />
+      <Button title="View Saved Goals" onPress={savedGoalsModalIsVisible} />
+      <Button title="View Deleted Goals" onPress={deletedGoalsModalIsVisible} />
 
       <Modal visible={isPriorityModalVisible} transparent={true}>
         <View style={styles.modalContainer}>
@@ -133,7 +204,6 @@ function OtherScreen({ navigation }) {
         </View>
       </Modal>
 
-      {/* Modal for  tags */}
       <Modal visible={isTagModalVisible} transparent={true}>
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
@@ -149,6 +219,18 @@ function OtherScreen({ navigation }) {
               <FlatList data={userTag} renderItem={renderTagItem}></FlatList>
             </View>
           </View>
+        </View>
+      </Modal>
+
+      <Modal visible={isViewSavedGoalModalVisible} transparent={true}>
+        <View style={styles.savedGoalsModalContainer}>
+          {renderSavedUserGoals()}
+        </View>
+      </Modal>
+
+      <Modal visible={isViewDeletedGoalModalVisible} transparent={true}>
+        <View style={styles.savedGoalsModalContainer}>
+          {renderDeletedUserGoals()}
         </View>
       </Modal>
     </View>
@@ -167,8 +249,8 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     padding: 20,
     borderRadius: 8,
-    width: "80%", // Adjust the width as needed
-    minHeight: 500, // Adjust the height as needed
+    width: "80%",
+    minHeight: 500,
     justifyContent: "center",
     alignItems: "center",
   },
@@ -185,13 +267,40 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "flex-end",
     alignItems: "center",
-    backgroundColor: "#FF0000", // Change to your desired delete button color
+    backgroundColor: "#FF0000",
     padding: 10,
-    marginLeft: 15, // Adjust the left margin as needed
-    marginRight: -15, // Adjust the right margin as needed
+    marginLeft: 15,
+    marginRight: -15,
   },
   tagFlatList: {
     height: 300,
+  },
+  savedGoalsContainer: {
+    flex: 1,
+    backgroundColor: "white",
+    padding: 20,
+    borderRadius: 8,
+    width: "100%",
+    maxHeight: "80%",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  savedGoalItem: {
+    marginVertical: 10,
+    padding: 10,
+    borderWidth: 1,
+    borderColor: "#ccc",
+    borderRadius: 5,
+  },
+  savedGoalText: {
+    fontSize: 16,
+    marginBottom: 5,
+  },
+  savedGoalsModalContainer: {
+    flex: 1,
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    justifyContent: "center",
+    alignItems: "center",
   },
 });
 

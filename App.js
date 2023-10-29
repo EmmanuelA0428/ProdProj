@@ -37,35 +37,79 @@ import { DescriptionProvider } from "./StoreAppData/DescriptionData";
 import { UserGoalDataProvider } from "./StoreAppData/userGoalInputData";
 import { UserPriorityProvider } from "./StoreAppData/PriorityData";
 import { UserTagProvider } from "./StoreAppData/TagData";
+import { DeletedUserGoalsProvider } from "./StoreAppData/DeletedGoalsData";
+import { CompletedUserGoalsProvider } from "./StoreAppData/CompletedGoalsData";
+
 function CustomHeader({ navigation }) {
   return <Icon name="bars" size={100} color="black" style={styles.icon} />;
+}
+
+function GoalsHeader({ navigation }) {
+  return (
+    <View style={styles.homeNavBar}>
+      <View style={styles.homeNavBarContents}>
+        <TouchableOpacity onPress={() => navigation.goBack()}>
+          {/* Use navigation.goBack() */}
+          <Icon name="arrow-left" size={30} color="black" style={styles.icon} />
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => navigation.navigate("Home")}>
+          <Icon name="home" size={30} color="black" style={styles.icon} />
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => navigation.navigate("Settings")}>
+          <Icon name="cog" size={30} color="black" style={styles.icon} />
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => navigation.navigate("Notes")}>
+          <Icon
+            name="sticky-note"
+            size={30}
+            color="black"
+            style={styles.icon}
+          />
+        </TouchableOpacity>
+      </View>
+    </View>
+  );
 }
 
 export default function App() {
   return (
     <UserGoalDataProvider>
       <GoalsProvider>
-        <DescriptionProvider>
-          <UserPriorityProvider>
-            <UserTagProvider>
-              <NavigationContainer>
-                <Stack.Navigator initialRouteName="Home">
-                  <Stack.Screen
-                    name="Home"
-                    component={HomeScreen}
-                    options={{
-                      title: "Home Page",
-                      header: () => <CustomHeader />,
-                    }}
-                  />
-                  <Stack.Screen name="Goal" component={GoalsScreen} />
-                  <Stack.Screen name="Settings" component={SettingsScreen} />
-                  <Stack.Screen name="Notes" component={NotesScreen} />
-                </Stack.Navigator>
-              </NavigationContainer>
-            </UserTagProvider>
-          </UserPriorityProvider>
-        </DescriptionProvider>
+        <DeletedUserGoalsProvider>
+          <CompletedUserGoalsProvider>
+            <DescriptionProvider>
+              <UserPriorityProvider>
+                <UserTagProvider>
+                  <NavigationContainer>
+                    <Stack.Navigator initialRouteName="Home">
+                      <Stack.Screen
+                        name="Home"
+                        component={HomeScreen}
+                        options={{
+                          title: "Home Page",
+                          header: () => <CustomHeader />,
+                        }}
+                      />
+                      <Stack.Screen
+                        name="Goal"
+                        component={GoalsScreen}
+                        // options={{
+                        //   title: "Goals",
+                        //   header: () => <GoalsHeader />,
+                        // }}
+                      />
+                      <Stack.Screen
+                        name="Settings"
+                        component={SettingsScreen}
+                      />
+                      <Stack.Screen name="Notes" component={NotesScreen} />
+                    </Stack.Navigator>
+                  </NavigationContainer>
+                </UserTagProvider>
+              </UserPriorityProvider>
+            </DescriptionProvider>
+          </CompletedUserGoalsProvider>
+        </DeletedUserGoalsProvider>
       </GoalsProvider>
     </UserGoalDataProvider>
   );
@@ -79,10 +123,19 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  homeNavBar: {},
-  inputContainer: {
+  homeNavBar: {
+    flexDirection: "row",
+    justifyContent: "space-around",
     width: "100%",
     alignItems: "center",
-    marginBottom: 20,
+    marginBottom: 60,
+  },
+  homeNavBarContents: {
+    //paddingTop: 60,
+    flex: 1,
+    flexDirection: "row",
+    justifyContent: "space-around",
+    width: "100%",
+    alignItems: "center",
   },
 });
