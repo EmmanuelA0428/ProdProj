@@ -1,5 +1,3 @@
-//Testing 123
-
 import {
   StyleSheet,
   Text,
@@ -15,7 +13,7 @@ import {
   Keyboard,
   TouchableHighlight,
   Touchable,
-  Animated,
+  //Animated,
 } from "react-native";
 import {
   GestureHandlerRootView,

@@ -2,7 +2,7 @@ import { StatusBar } from "expo-status-bar";
 import { useState } from "react";
 import * as React from "react";
 import Icon from "react-native-vector-icons/FontAwesome";
-import { GestureHandlerRootView } from "react-native-gesture-handler";
+//import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 import {
   StyleSheet,
