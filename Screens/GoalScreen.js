@@ -1,3 +1,4 @@
+//---------------------------------Imports---------------------------------------
 import {
   StyleSheet,
   Text,
@@ -13,7 +14,7 @@ import {
   Keyboard,
   TouchableHighlight,
   Touchable,
-  //Animated,
+  Animated,
 } from "react-native";
 import {
   GestureHandlerRootView,
@@ -26,13 +27,8 @@ import { useContext } from "react";
 import * as React from "react";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { CheckBox } from "react-native-elements";
-//import * as Reanimated from "react-native-reanimated";
-
-// import {
-//   useSharedValue,
-//   useAnimatedGestureHandler,
-//   useAnimatedStyle,
-// } from "react-native-reanimated";
+import * as Reanimated from "react-native-reanimated";
+import DraggableFlatList from "react-native-draggable-flatlist";
 
 //importing the context
 import GoalsContext from "../StoreAppData/GoalsData";
@@ -43,8 +39,12 @@ import userTagContext from "../StoreAppData/TagData";
 import DeletedUserGoalsContext from "../StoreAppData/DeletedGoalsData";
 import CompletedUserGoalsContext from "../StoreAppData/CompletedGoalsData";
 
+//------------------------------ Goal Screen - App ------------------------------
 function GoalScreen({ navigation }) {
-  //useContext - These variables are used to store data that is shared between screens
+  //------------------------------ useContext -  --------------------------------
+  {
+    /*useContext - values shared across screens */
+  }
   const { userGoals, setUserGoals } = useContext(GoalsContext);
   const { userDescription, setUserDescription } =
     useContext(DescriptionContext);
@@ -58,7 +58,10 @@ function GoalScreen({ navigation }) {
     CompletedUserGoalsContext
   );
 
-  //useState - These variables are used to store data that changes over time
+  //------------------------------ useState -  ----------------------------------
+  {
+    /*useState - values that are local to the screen */
+  }
   const [enteredGoal, setEnteredGoal] = useState("");
   const [enteredDescription, setEnteredDescription] = useState("");
   const [editIndex, setEditIndex] = useState(null);
@@ -74,8 +77,9 @@ function GoalScreen({ navigation }) {
   const [isEditTagModalVisible, setEditTagModalVisible] = useState(false);
   const [isUndoVisible, setIsUndoVisible] = useState(false);
   const [undoData, setUndoData] = useState(null);
+  const [isAddGoalModal, setAddGoalModal] = useState(false);
 
-  //Modals - These functions are used to show and hide the modals
+  //------------------------------ Event Handlers - Modals ------------------------------
   function setEditGoalModalVisibleTrue() {
     setEditGoalModalVisible(true);
   }
@@ -102,7 +106,6 @@ function GoalScreen({ navigation }) {
   function tagModalIsNotVisible() {
     setTagModalVisible(false);
   }
-
   // ------------------------------ Event Handlers - App ------------------------------
   function handleInputChangeGoal(test) {
     setEnteredGoal(test);
@@ -132,6 +135,8 @@ function GoalScreen({ navigation }) {
   function handleDismissContent() {
     setInputVisible(false);
     Keyboard.dismiss(); // Dismiss the keyboard
+    console.log("Dismissed - This works");
+    setInputVisible(false);
   }
   function removeText() {
     setEnteredGoal("");
@@ -155,7 +160,6 @@ function GoalScreen({ navigation }) {
     setSelectedPriority("");
     setSelectedTag("");
   }
-
   //------------------------------ Event Handlers - Goals ------------------------------
   function handleEditGoal(text, index) {
     setUserGoalData((prevData) => {
@@ -260,7 +264,7 @@ function GoalScreen({ navigation }) {
     setUndoData(null);
   }
 
-  //------------------------------ Event Handlers - Description ------------------------------
+  //------------------------------ Event Handlers - Description --------------------------
   function handleEditDescription(text, index) {
     setUserGoalData((prevData) => {
       const newData = [...prevData];
@@ -268,9 +272,7 @@ function GoalScreen({ navigation }) {
       return newData;
     });
   }
-
   //------------------------------ Event Handlers - Priority ------------------------------
-
   function addPriority(priority) {
     setSelectedPriority(priority); // Store the selected priority
     console.log("Priority added" + priority);
@@ -307,7 +309,6 @@ function GoalScreen({ navigation }) {
     console.log("Tag added " + tag);
     tagModalIsNotVisible();
   }
-
   function handleAddTag() {
     // Handle adding the context here
     console.log("Adding context");
@@ -345,24 +346,12 @@ function GoalScreen({ navigation }) {
       return newData;
     });
   }
-
-  //Render functions - These functions are used to render the UI
+  //------------------------------ Render Functions ---------------------------------
+  {
+    /*These functions are used to render the UI */
+  }
   const renderGoalData = ({ item, index }) => {
     const isEditing = editIndex === index;
-
-    // const translateX = useSharedValue(0);
-
-    // const PanGestureHandler = useAnimatedGestureHandler({
-    //   onActive: (event) => {
-    //     translateX.value = event.translationX;
-    //   },
-    //   onEnd: () => {},
-    // });
-    // const animatedStyle = useAnimatedStyle(() => {
-    //   return {
-    //     transform: [{ translateX: translateX.value }],
-    //   };
-    // });
     return (
       <View style={styles.userGoalsDataContainer}>
         {isEditing ? (
@@ -400,7 +389,6 @@ function GoalScreen({ navigation }) {
                   onPress={() => handleDeleteGoal(index)}
                 />
               </View>
-
               <Modal visible={isEditPriorityModalVisible} transparent={true}>
                 <View style={styles.editPriorityModal}>
                   <Text>Priority</Text>
@@ -437,42 +425,49 @@ function GoalScreen({ navigation }) {
 
           //   <PanGestureHandler onGestureEvent={PanGestureHandler}>
           //     <Animated.View style={[styles.goalItemContainer, animatedStyle]}>
-          <TouchableHighlight
-            onPress={() => handleEdit(index)}
-            // underlayColor="transparent"
-          >
-            <View style={styles.goalItemContainer}>
-              <View style={styles.goalTextContainer}>
-                {/*Adding checkbox */}
-                <CheckBox
-                  checkedIcon={
-                    <Icon
-                      name="dot-circle-o"
-                      type="font-awesome"
-                      color="green"
-                      size={40}
-                    />
-                  }
-                  uncheckedIcon={
-                    <Icon
-                      name="circle-thin"
-                      type="font-awesome"
-                      color="grey"
-                      size={40}
-                    />
 
-                    //onPress - calls a function when the checkbox is clicked
-                    //Add an undo feature
-                  }
-                  onPress={() => handleSaveGoals(index)}
-                />
-                <Text>{item[0]}</Text>
-                <Text>{item[1]}</Text>
-                <Text>Priority: {item[2]}</Text>
-                <Text>Tag: item: {item[3]}</Text>
+          <Swipeable
+            renderRightActions={renderRightActions}
+            onSwipeableOpen={() => handleDeleteGoal(index)}
+          >
+            <TouchableHighlight
+              onPress={() => handleEdit(index)}
+              underlayColor="transparent"
+              // onLongPress={drag}
+            >
+              <View style={styles.goalItemContainer}>
+                <View style={styles.goalTextContainer}>
+                  {/*Adding checkbox */}
+                  <CheckBox
+                    checkedIcon={
+                      <Icon
+                        name="dot-circle-o"
+                        type="font-awesome"
+                        color="green"
+                        size={40}
+                      />
+                    }
+                    uncheckedIcon={
+                      <Icon
+                        name="circle-thin"
+                        type="font-awesome"
+                        color="grey"
+                        size={40}
+                      />
+
+                      //onPress - calls a function when the checkbox is clicked
+                      //Add an undo feature
+                    }
+                    onPress={() => handleSaveGoals(index)}
+                  />
+                  <Text>{item[0]}</Text>
+                  <Text>{item[1]}</Text>
+                  <Text>Priority: {item[2]}</Text>
+                  <Text>Tag: item: {item[3]}</Text>
+                </View>
               </View>
-            </View>
-          </TouchableHighlight>
+            </TouchableHighlight>
+          </Swipeable>
           //     </Animated.View>
           //   </PanGestureHandler>
 
@@ -516,12 +511,15 @@ function GoalScreen({ navigation }) {
 
         <CheckBox value="Testing" />
 
+        {/*Change back to dragable  */}
         <FlatList
           data={userGoalData}
           renderItem={renderGoalData}
           keyExtractor={(item, index) => index.toString()}
+          // onDragEnd={({ data }) => setUserGoalData(data)}
         />
       </View>
+
       {/* Wrap the content with TouchableWithoutFeedback */}
       <TouchableWithoutFeedback onPress={handleDismissContent}>
         <KeyboardAvoidingView
@@ -530,6 +528,7 @@ function GoalScreen({ navigation }) {
         >
           {/* Show the input field and buttons when isInputVisible is true */}
           {isInputVisible ? (
+            //<Modal visible={isInputVisible} transparent={true}>
             <View style={styles.showEverything}>
               <TextInput
                 style={styles.textInput}
@@ -791,100 +790,25 @@ const styles = StyleSheet.create({
     bottom: 10,
     left: 10, // Adjust the position as needed
   },
+  editAddGoalModal: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "lightgray",
+    padding: 20,
+    width: "100%",
+    position: "absolute",
+    bottom: 100,
+  },
 
-  // container: {
-  //   flex: 1,
-  //   backgroundColor: "#fff",
-  // },
-  // goalsContainer: {
-  //   flex: 1,
-  //   paddingTop: 10,
-  //   paddingHorizontal: 20,
-  // },
-  // textInput: {
-  //   borderColor: "black",
-  //   borderWidth: 1,
-  //   padding: 10,
-  //   width: "80%",
-  // },
-  // inputContainer: {
-  //   justifyContent: "center",
-  //   alignItems: "center",
-  //   width: "100%",
-  //   marginTop: 20,
-  //   paddingBottom: 100,
-  // },
-  // showEverything: {
-  //   width: "100%",
-  //   alignItems: "center",
-  //   backgroundColor: "grey",
-  //   paddingTop: 10,
-  //   paddingBottom: 20,
-  // },
-  // extraButtons: {
-  //   flexDirection: "row",
-  //   justifyContent: "space-between",
-  //   width: "80%",
-  //   marginTop: 10,
-  // },
-  // priorityModal: {
-  //   position: "absolute",
-  //   bottom: "20%",
-  //   left: "10%",
-  //   transform: [{ translateX: -50 }],
-  //   padding: 20,
-  //   borderRadius: 10,
-  //   elevation: 5,
-  //   zIndex: 1,
-  //   width: 200,
-  //   height: 200,
-  //   backgroundColor: "white",
-  //   borderColor: "black",
-  //   borderWidth: 1,
-  // },
-  // goalItemContainer: {
-  //   flexDirection: "row",
-  //   justifyContent: "space-between",
-  //   alignItems: "center",
-  //   backgroundColor: "white",
-  //   borderRadius: 10,
-  //   paddingHorizontal: 10,
-  //   paddingVertical: 15,
-  //   elevation: 2,
-  //   marginBottom: 10,
-  // },
-  // goalTextContainer: {
-  //   flex: 1,
-  // },
-  // swipeToDelete: {
-  //   flexDirection: "row",
-  //   justifyContent: "flex-end",
-  //   alignItems: "center",
-  //   backgroundColor: "#FF0000",
-  //   padding: 10,
-  //   marginLeft: 15,
-  //   marginRight: -15,
-  // },
-  // editGoalModal: {
-  //   flex: 1,
-  //   justifyContent: "flex-start",
-  //   alignItems: "center",
-  //   backgroundColor: "lightgray",
-  //   padding: 20,
-  //   width: "100%",
-  //   position: "absolute",
-  //   bottom: 100,
-  // },
-  // editPriorityModal: {
-  //   flex: 1,
-  //   justifyContent: "flex-start",
-  //   alignItems: "center",
-  //   backgroundColor: "lightgray",
-  //   padding: 20,
-  //   width: "100%",
-  //   position: "absolute",
-  //   bottom: 100,
-  // }
+  touchable: {
+    zIndex: 100,
+  },
+
+  modal: {
+    zIndex: 10,
+  },
 });
 
 export default GoalScreen;
+//
