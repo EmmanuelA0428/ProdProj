@@ -8,7 +8,11 @@ function HomeScreen({ navigation }) {
     <View>
       <Button title="Home Page" onPress={() => navigation.navigate("Home")} />
       <Button title="Goals Page" onPress={() => navigation.navigate("Goal")} />
-      <Button title="Other Page" onPress={() => navigation.navigate("Other")} />
+      <Button title="Notes page" onPress={() => navigation.navigate("Notes")} />
+      <Button
+        title="Settings Page"
+        onPress={() => navigation.navigate("Settings")}
+      />
     </View>
   );
 }

@@ -1,4 +1,5 @@
-// Purpose: To store the user's description data
+// Purpose: To store the user's goals data
+// This file is used to store the user's goals data in the app, and to load and save the data to the device's storage.
 
 import React, { createContext, useState, useEffect } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
